@@ -12,17 +12,35 @@
 	rel="stylesheet">
 
 <style>
+* {
+	box-sizing: border-box;
+}
+
 body {
 	background-color: #f0f7f0;
 	margin: 0;
 	padding: 0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	font-family: 'Segoe UI', sans-serif;
 }
 
-/* Header */
+main {
+	flex: 1;
+	padding-top: 62px; /* offset for fixed header */
+}
+
+/* ── Header ── */
 .store-header {
 	background: linear-gradient(135deg, #2e7d32, #43a047);
 	padding: 12px 10px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
 }
 
 .store-header h2 {
@@ -46,7 +64,8 @@ body {
 	transform: scale(1.05);
 	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
-/* Cards */
+
+/* ── Cards ── */
 .card-grid {
 	padding: 14px 10px;
 }
@@ -91,71 +110,238 @@ body {
 	display: inline-block;
 	margin-top: 6px;
 }
+
+/* ── Footer ── */
+.site-footer {
+	background: linear-gradient(135deg, #1b5e20, #2e7d32);
+	color: #e8f5e9;
+	padding: 28px 16px 18px;
+	margin-top: 24px;
+	border-top: 3px solid #66bb6a;
+}
+
+.footer-inner {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+/* Three-column grid */
+.footer-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 1.2rem;
+	margin-bottom: 18px;
+}
+
+/* Store name column */
+.footer-brand .brand-name {
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #ffffff;
+	margin-bottom: 4px;
+}
+
+.footer-brand p {
+	font-size: 0.78rem;
+	color: #a5d6a7;
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* Developer column */
+.footer-dev .footer-col-title {
+	font-size: 0.68rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: #81c784;
+	margin-bottom: 6px;
+}
+
+.footer-dev .dev-name {
+	font-size: 0.92rem;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.footer-dev .dev-role {
+	font-size: 0.75rem;
+	color: #a5d6a7;
+	margin: 0;
+}
+
+/* Contact column */
+.footer-contact .footer-col-title {
+	font-size: 0.68rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: #81c784;
+	margin-bottom: 6px;
+}
+
+.contact-item {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 0.8rem;
+	color: #c8e6c9;
+	margin-bottom: 5px;
+}
+
+.contact-item .icon {
+	font-size: 0.9rem;
+	flex-shrink: 0;
+}
+
+.contact-item a {
+	color: #c8e6c9;
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.contact-item a:hover {
+	color: #ffffff;
+}
+
+/* Divider */
+.footer-divider {
+	border: none;
+	border-top: 1px solid rgba(255, 255, 255, 0.15);
+	margin: 0 0 12px;
+}
+
+/* Copyright bar */
+.footer-copy {
+	text-align: center;
+	font-size: 0.72rem;
+	color: #81c784;
+	letter-spacing: 0.03em;
+}
+
+.footer-copy span {
+	color: #ffffff;
+	font-weight: 600;
+}
+
+/* ── Mobile footer ── */
+@media ( max-width : 576px) {
+	.footer-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+		text-align: center;
+	}
+	.contact-item {
+		justify-content: center;
+	}
+	.footer-brand .brand-name {
+		font-size: 1rem;
+	}
+}
 </style>
 </head>
 
 <body>
 
+	<!-- ── Header ── -->
 	<div class="store-header">
 		<div class="container d-flex align-items-center">
-
-			<!-- Left Space -->
 			<div style="width: 40px;"></div>
-
-			<!-- Store Title -->
 			<div class="flex-grow-1 text-center">
-				<h2 class="m-0">🥦 JGR Vegetable Store</h2>
+				<h2 class="m-0">🥦 Rao's  Vegetable Store</h2>
 			</div>
-
-			<!-- Admin Button -->
 			<div>
-				<a href="admin-login.jsp" class="btn btn-sm fw-semibold admin-btn">
-					🔒 </a>
+				<a href="admin-login.jsp" class="btn btn-sm fw-semibold admin-btn">🔒</a>
 			</div>
-
 		</div>
 	</div>
 
+	<!-- ── Main content ── -->
+	<main>
+		<div class="container-fluid card-grid">
+			<div class="row g-3">
 
-	<!-- Vegetable Cards -->
+				<%
+				List<Vegetable> list = (List<Vegetable>) request.getAttribute("vegList");
+				if (list != null) {
+					for (Vegetable v : list) {
+				%>
 
-	<div class="container-fluid card-grid">
+				<div class="col-6 col-md-4 col-lg-3">
+					<div class="card veg-card text-center">
+						<h5 class="card-title"><%=v.getName()%></h5>
+						<img src="ImageLoaderServlet?name=<%=v.getImage()%>"
+							class="img-fluid" alt="<%=v.getName()%>">
+						<div>
+							<span class="price-tag">₹<%=v.getPrice()%> / kg
+							</span>
+						</div>
+					</div>
+				</div>
 
-		<div class="row g-3">
+				<%
+				}
+				}
+				%>
 
-			<%
-			List<Vegetable> list = (List<Vegetable>) request.getAttribute("vegList");
+			</div>
+		</div>
+	</main>
+	
 
-			if (list != null) {
-				for (Vegetable v : list) {
-			%>
+	<!-- ── Footer ── -->
+	<footer class="site-footer">
+		<div class="footer-inner">
 
-			<div class="col-6 col-md-4 col-lg-3">
+			<div class="footer-grid">
 
-				<div class="card veg-card text-center">
+				<!-- Store Brand -->
+				<div class="footer-brand">
+					<div class="brand-name">🥦 JGR Vegetable Store</div>
+					<p>Fresh vegetables delivered to your doorstep. Quality you can
+						trust, prices you'll love.</p>
+				</div>
 
-					<h5 class="card-title"><%=v.getName()%></h5>
+				<!-- Developer -->
+				<div class="footer-dev">
+					<div class="footer-col-title">Developed By</div>
+					<div class="dev-name">👨‍💻 Tejesh Jamalapurapu</div>
+					<p class="dev-role">Full Stack Developer</p>
+				</div>
 
-					<img src="ImageLoaderServlet?name=<%=v.getImage()%>"
-						class="img-fluid" alt="<%=v.getName()%>">
+				<!-- Contact -->
+				<div class="footer-contact">
+					<div class="footer-col-title">Contact Us</div>
 
-					<div>
-						<span class="price-tag"> ₹<%=v.getPrice()%> / kg
-						</span>
+					<div class="contact-item">
+						<span class="icon">📞</span> <a href="tel:+917661826779">+91
+							7661826779</a>
+					</div>
+
+					<div class="contact-item">
+						<span class="icon">📧</span> <a
+							href="mailto:tejeshjamalapurapu@gmail.com">tejeshjamalapurapu@gmail.com</a>
+					</div>
+
+					<div class="contact-item">
+						<span class="icon">📍</span> <span>Hyderabad, Telangana</span>
 					</div>
 
 				</div>
 
 			</div>
 
-			<%
-			}
-			}
-			%>
+			<hr class="footer-divider">
+
+			<div class="footer-copy">
+				&copy; 2025 <span>JGR Vegetable Store</span>. All rights reserved.
+				&nbsp;|&nbsp; Developed by <span>Tejesh</span>
+			</div>
 
 		</div>
+	</footer>
 
-	</div>
-
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -21,7 +21,7 @@ public class UpdateVegetableServlet extends HttpServlet {
 
 		VegetableDAO dao = new VegetableDAO();
 		dao.updateVegetable(id, name, price);
-		response.sendRedirect("manageVegetable.jsp");
+		response.sendRedirect("admin-manageVegetable.jsp");
 	}
 
 }

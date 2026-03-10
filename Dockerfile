@@ -1,8 +1,8 @@
-FROM tomcat:9.0
+FROM tomcat:10.1
 
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-COPY src/main/webapp /usr/local/tomcat/webapps/ROOT
+COPY vegetablesStore.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
 
