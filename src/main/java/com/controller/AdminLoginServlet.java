@@ -19,11 +19,14 @@ public class AdminLoginServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		 String username = request.getParameter("username");
+		 
 	        String password = request.getParameter("password");
+	     
 
 	        try {
 	        	DBConnection db=new DBConnection();
 	            Connection con = db.getConnection();
+	           
 	            PreparedStatement ps = con.prepareStatement(
 	                "SELECT * FROM admin WHERE username=? AND password=?");
 
@@ -33,13 +36,17 @@ public class AdminLoginServlet extends HttpServlet {
 	            ResultSet rs = ps.executeQuery();
 
 	            if(rs.next()) {
-
-	                request.getSession().setAttribute("admin", username);
-	                response.sendRedirect("admin-dashboard.jsp");
-
+	            	String dbPassword = rs.getString("password");
+	            	
+	            	if(password.equals(dbPassword)) {
+		                request.getSession().setAttribute("admin", username);
+		                response.sendRedirect("admin-dashboard.jsp");
+	            	}else {
+	            		response.sendRedirect("admin-login.jsp?error=invalidpassword");
+	            	}
 	            } else {
 
-	                response.sendRedirect("admin-login.jsp");
+	                response.sendRedirect("admin-login.jsp?error=usernotfound");
 	            }
 
 	        } catch(Exception e) {

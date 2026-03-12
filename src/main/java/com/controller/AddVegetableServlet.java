@@ -26,6 +26,7 @@ public class AddVegetableServlet extends HttpServlet {
 
 		 String name = request.getParameter("name");
 	        String price = request.getParameter("price");
+	        
 
 	        Part filePart = request.getPart("image");
 	        String originalFileName = filePart.getSubmittedFileName();

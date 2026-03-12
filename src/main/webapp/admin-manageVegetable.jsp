@@ -383,8 +383,7 @@ body {
 						</tr>
 
 						<!-- UPDATE MODAL -->
-						<div class="modal fade" id="updateModal<%=v.getId()%>"
-							tabindex="-1">
+						<div class="modal fade" id="updateModal<%=v.getId()%>" tabindex="-1">
 							<div class="modal-dialog modal-dialog-centered">
 								<div class="modal-content">
 
@@ -407,8 +406,8 @@ body {
 
 											<div class="mb-3">
 												<label class="form-label">Price (₹)</label> <input
-													type="text" name="price" class="form-control"
-													value="<%=v.getPrice()%>" required>
+													type="number" name="price" min="0" step="0.01"
+													class="form-control" value="<%=v.getPrice()%>" required>
 											</div>
 
 										</div>
@@ -423,6 +422,7 @@ body {
 								</div>
 							</div>
 						</div>
+						
 						<!-- END MODAL -->
 
 						<%

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Rao's Vegetable Store</title>
+<title>JGR Vegetable Store</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link
@@ -248,7 +248,7 @@ main {
 		<div class="container d-flex align-items-center">
 			<div style="width: 40px;"></div>
 			<div class="flex-grow-1 text-center">
-				<h2 class="m-0">🥦 Rao's  Vegetable Store</h2>
+				<h2 class="m-0">🥦 JGR  Vegetable Store</h2>
 			</div>
 			<div>
 				<a href="admin-login.jsp" class="btn btn-sm fw-semibold admin-btn">🔒</a>
