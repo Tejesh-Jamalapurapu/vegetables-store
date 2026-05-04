@@ -37,7 +37,6 @@ public class ImageLoaderServlet extends HttpServlet {
 			while ((bytesRead = fis.read(buffer)) != -1) {
 				os.write(buffer, 0, bytesRead);
 			}
-
 			fis.close();
 			os.close();
 		}
