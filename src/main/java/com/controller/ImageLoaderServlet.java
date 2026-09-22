@@ -13,32 +13,73 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/ImageLoaderServlet")
 public class ImageLoaderServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    private static final long serialVersionUID = 1L;
 
-		String fileName = request.getParameter("name");
+    private String getUploadPath() {
 
-		String imagePath = "C:/vegetable_uploads/" + fileName;
+        String os = System.getProperty("os.name").toLowerCase();
 
-		File file = new File(imagePath);
+        if (os.contains("win")) {
+            return "C:/vegetable_uploads";
+        } else {
+            return "/opt/vegetable_uploads";
+        }
+    }
 
-		if (file.exists()) {
-			response.setContentType(getServletContext().getMimeType(fileName));
-			FileInputStream fis = new FileInputStream(file);
-			ServletOutputStream os = response.getOutputStream();
+    @Override
+    protected void doGet(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
 
+        String fileName = request.getParameter("name");
 
-			byte[] buffer = new byte[1024];
-			int bytesRead;
+        if (fileName == null || fileName.contains("..")
+                || fileName.contains("/")
+                || fileName.contains("\\")) {
 
-			while ((bytesRead = fis.read(buffer)) != -1) {
-				os.write(buffer, 0, bytesRead);
-			}
-			fis.close();
-			os.close();
-		}
-	}
+            response.sendError(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "Invalid file name"
+            );
+
+            return;
+        }
+
+        String imagePath = getUploadPath()
+                + File.separator + fileName;
+
+        File file = new File(imagePath);
+
+        if (!file.exists() || !file.isFile()) {
+
+            response.sendError(
+                    HttpServletResponse.SC_NOT_FOUND,
+                    "Image not found"
+            );
+
+            return;
+        }
+
+        String contentType = getServletContext()
+                .getMimeType(fileName);
+
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        response.setContentType(contentType);
+        response.setContentLengthLong(file.length());
+
+        try (FileInputStream fis = new FileInputStream(file);
+             ServletOutputStream os = response.getOutputStream()) {
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+        }
+    }
 }

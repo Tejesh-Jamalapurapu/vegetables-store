@@ -2,6 +2,7 @@ package com.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -15,54 +16,74 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-
 @WebServlet("/addVegetable")
 @MultipartConfig
 public class AddVegetableServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private static final long serialVersionUID = 1L;
 
-		 String name = request.getParameter("name");
-	        String price = request.getParameter("price");
-	        
+    private String getUploadPath() {
 
-	        Part filePart = request.getPart("image");
-	        String originalFileName = filePart.getSubmittedFileName();
+        String os = System.getProperty("os.name").toLowerCase();
 
-	        // 🔥 Save in C drive permanently
-	        String uploadPath = "C:/vegetable_uploads";
+        if (os.contains("win")) {
+            return "C:/vegetable_uploads";
+        } else {
+            return "/opt/vegetable_uploads";
+        }
+    }
 
-	        File uploadDir = new File(uploadPath);
-	        if (!uploadDir.exists()) {
-	            uploadDir.mkdirs();
-	        }
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
 
-	        // 🔥 Create unique filename
-	        String fileName = System.currentTimeMillis() + "_" + originalFileName;
+        String name = request.getParameter("name");
+        String price = request.getParameter("price");
 
-	        filePart.write(uploadPath + File.separator + fileName);
+        Part filePart = request.getPart("image");
 
-	        // 🔥 Save into database
-	        try {
-	        	DBConnection db=new DBConnection();
-	            Connection con = db.getConnection();
-	            PreparedStatement ps = con.prepareStatement(
-	                    "INSERT INTO vegetables(name, price, image) VALUES(?,?,?)");
+        String originalFileName = Paths.get(
+                filePart.getSubmittedFileName()
+        ).getFileName().toString();
 
-	            ps.setString(1, name);
-	            ps.setString(2, price);
-	            ps.setString(3, fileName);
+        String uploadPath = getUploadPath();
 
-	            ps.executeUpdate();
-	            con.close();
+        File uploadDir = new File(uploadPath);
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
 
-	        response.sendRedirect("home");
-	    }
+        String fileName = System.currentTimeMillis()
+                + "_" + originalFileName;
 
+        filePart.write(
+                uploadPath + File.separator + fileName
+        );
+
+        try {
+
+            DBConnection db = new DBConnection();
+            Connection con = db.getConnection();
+
+            PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO vegetables(name, price, image) VALUES(?,?,?)"
+            );
+
+            ps.setString(1, name);
+            ps.setString(2, price);
+            ps.setString(3, fileName);
+
+            ps.executeUpdate();
+
+            ps.close();
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        response.sendRedirect("home");
+    }
 }
